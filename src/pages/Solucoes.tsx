@@ -33,6 +33,30 @@ const categories = [
   { id: "biodiversidade", label: "Biodiversidade", icon: TreePine },
 ];
 
+// RF02: Filtros avançados
+const trlOptions = [
+  { value: "all", label: "Todos os TRLs" },
+  { value: "1-3", label: "TRL 1-3 (Pesquisa)" },
+  { value: "4-6", label: "TRL 4-6 (Desenvolvimento)" },
+  { value: "7-9", label: "TRL 7-9 (Comercial)" },
+];
+
+const odsOptions = [
+  { value: "all", label: "Todas as ODS" },
+  { value: "6", label: "ODS 6 - Água" },
+  { value: "7", label: "ODS 7 - Energia" },
+  { value: "12", label: "ODS 12 - Consumo Responsável" },
+  { value: "13", label: "ODS 13 - Ação Climática" },
+];
+
+const setorOptions = [
+  { value: "all", label: "Todos os Setores" },
+  { value: "industria", label: "Indústria" },
+  { value: "agronegocio", label: "Agronegócio" },
+  { value: "energia", label: "Energia" },
+  { value: "mineracao", label: "Mineração" },
+];
+
 const solutions = [
   {
     id: 1,
@@ -117,6 +141,10 @@ const solutions = [
 const Solucoes = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTrl, setSelectedTrl] = useState("all");
+  const [selectedOds, setSelectedOds] = useState("all");
+  const [selectedSetor, setSelectedSetor] = useState("all");
+  const [showFilters, setShowFilters] = useState(false);
 
   const filteredSolutions = solutions.filter((solution) => {
     const matchesCategory = selectedCategory === "all" || solution.category === selectedCategory;
@@ -176,7 +204,12 @@ const Solucoes = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
-                <Button variant="secondary" size="lg" className="hidden sm:flex">
+                <Button 
+                  variant="secondary" 
+                  size="lg" 
+                  className="hidden sm:flex"
+                  onClick={() => setShowFilters(!showFilters)}
+                >
                   <Filter className="w-5 h-5" />
                   Filtros
                 </Button>
@@ -186,6 +219,69 @@ const Solucoes = () => {
         </section>
 
         <div className="container mx-auto px-4 py-8">
+          {/* RF02: Filtros Avançados */}
+          {showFilters && (
+            <div className="bg-card rounded-2xl border border-border p-6 mb-8 animate-fade-up">
+              <h3 className="font-display font-semibold text-foreground mb-4">Filtros Avançados</h3>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm text-muted-foreground">Nível TRL</label>
+                  <Select value={selectedTrl} onValueChange={setSelectedTrl}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {trlOptions.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm text-muted-foreground">ODS Abordada</label>
+                  <Select value={selectedOds} onValueChange={setSelectedOds}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {odsOptions.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm text-muted-foreground">Setor Alvo</label>
+                  <Select value={selectedSetor} onValueChange={setSelectedSetor}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {setorOptions.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-end">
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => {
+                      setSelectedTrl("all");
+                      setSelectedOds("all");
+                      setSelectedSetor("all");
+                      setSearchQuery("");
+                      setSelectedCategory("all");
+                    }}
+                  >
+                    Limpar Filtros
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Categories */}
           <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 -mx-4 px-4">
             {categories.map((category) => (
