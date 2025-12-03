@@ -108,7 +108,7 @@ const Dashboard = () => {
             { icon: Home, label: "Página Inicial", href: "/" },
             { icon: BarChart3, label: "Dashboard", href: "/dashboard", active: true },
             { icon: Search, label: "Explorar Soluções", href: "/solucoes" },
-            { icon: Users, label: "Conexões", href: "#" },
+            { icon: Users, label: "Práticas Adotadas", href: "/praticas-adotadas" },
             { icon: Target, label: "Registro de Impacto", href: "/registro-impacto" },
             { icon: FileText, label: "Relatórios ESG", href: "/relatorios" },
             { icon: Settings, label: "Perfil da Empresa", href: "/perfil-empresa" },

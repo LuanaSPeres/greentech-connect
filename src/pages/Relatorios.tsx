@@ -300,6 +300,13 @@ const Relatorios = () => {
                   Exportar {formato.toUpperCase()}
                 </Button>
 
+                <Link to="/visualizar-relatorio" className="block mt-4">
+                  <Button variant="outline" size="lg" className="w-full">
+                    <Eye className="w-5 h-5" />
+                    Visualizar Relatório Completo
+                  </Button>
+                </Link>
+
                 <p className="text-xs text-muted-foreground text-center mt-4">
                   O relatório incluirá todas as referências às fontes de dados anexadas
                 </p>
