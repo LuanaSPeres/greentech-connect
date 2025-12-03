@@ -1,4 +1,5 @@
-import { Factory, Building2, Lightbulb, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Factory, Building2, Lightbulb, Tractor, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const audiences = [
@@ -8,20 +9,31 @@ const audiences = [
     description: "Encontre soluções tecnológicas que aceleram sua jornada de descarbonização e otimizam processos produtivos com menor impacto ambiental.",
     features: ["Matchmaking com startups verdes", "Dashboard de métricas ESG", "Relatórios de compliance"],
     color: "primary" as const,
+    link: "/saiba-mais/industrias",
+  },
+  {
+    icon: Tractor,
+    title: "Agronegócio",
+    description: "Soluções sustentáveis para agricultura e pecuária, desde manejo de solo até rastreabilidade de carbono e conservação de recursos hídricos.",
+    features: ["Agricultura de precisão", "Créditos de carbono", "Gestão hídrica"],
+    color: "accent" as const,
+    link: "/saiba-mais/industrias",
   },
   {
     icon: Building2,
     title: "Órgãos Governamentais",
     description: "Monitore e promova a adoção de tecnologias sustentáveis no setor produtivo com dados consolidados e rastreabilidade completa.",
     features: ["Painel de políticas públicas", "Indicadores regionais", "Certificações verdes"],
-    color: "accent" as const,
+    color: "primary" as const,
+    link: "/saiba-mais/governo",
   },
   {
     icon: Lightbulb,
     title: "Startups & Pesquisadores",
-    description: "Conecte suas inovações verdes diretamente às indústrias que buscam soluções sustentáveis. Escale seu impacto rapidamente.",
+    description: "Conecte suas inovações verdes diretamente às indústrias e agronegócios que buscam soluções sustentáveis. Escale seu impacto rapidamente.",
     features: ["Vitrine de soluções", "Acesso a investidores", "Validação industrial"],
-    color: "primary" as const,
+    color: "accent" as const,
+    link: "/saiba-mais/startups",
   },
 ];
 
@@ -39,12 +51,12 @@ const AudienceSection = () => {
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Conectamos todos os atores do ecossistema de inovação sustentável para 
-            acelerar a transformação verde da indústria brasileira.
+            acelerar a transformação verde da indústria e do agronegócio brasileiro.
           </p>
         </div>
 
         {/* Cards */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {audiences.map((audience, index) => (
             <div
               key={audience.title}
@@ -66,7 +78,7 @@ const AudienceSection = () => {
               <h3 className="font-display font-semibold text-xl text-foreground mb-3">
                 {audience.title}
               </h3>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
+              <p className="text-muted-foreground mb-6 leading-relaxed text-sm">
                 {audience.description}
               </p>
 
@@ -81,9 +93,11 @@ const AudienceSection = () => {
               </ul>
 
               {/* CTA */}
-              <Button variant="ghost" className="group/btn p-0 h-auto text-primary hover:text-primary/80">
-                Saiba mais
-                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+              <Button variant="ghost" className="group/btn p-0 h-auto text-primary hover:text-primary/80" asChild>
+                <Link to={audience.link}>
+                  Saiba mais
+                  <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                </Link>
               </Button>
             </div>
           ))}

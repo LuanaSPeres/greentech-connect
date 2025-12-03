@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import heroBg from "@/assets/hero-bg.png";
@@ -9,7 +10,7 @@ const HeroSection = () => {
       <div className="absolute inset-0 z-0">
         <img
           src={heroBg}
-          alt="Rede de tecnologias sustentáveis"
+          alt="Rede de tecnologias sustentáveis para indústria e agronegócio"
           className="w-full h-full object-cover opacity-20"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
@@ -34,23 +35,25 @@ const HeroSection = () => {
             Conectando{" "}
             <span className="text-gradient">Sustentabilidade</span>
             <br />
-            à Inovação Industrial
+            à Indústria e ao Agronegócio
           </h1>
 
           {/* Subheading */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-up" style={{ animationDelay: "0.2s" }}>
-            Plataforma que acelera a adoção de tecnologias verdes no setor produtivo, 
+            Plataforma que acelera a adoção de tecnologias verdes no setor produtivo e agrícola, 
             garantindo impacto mensurável e rastreável nas metas ESG da sua organização.
           </p>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up" style={{ animationDelay: "0.3s" }}>
-            <Button variant="hero" size="xl" className="group">
-              Explorar Soluções
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            <Button variant="hero" size="xl" className="group" asChild>
+              <Link to="/solucoes">
+                Explorar Soluções
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </Button>
-            <Button variant="outline-hero" size="xl">
-              Agendar Demo
+            <Button variant="outline-hero" size="xl" asChild>
+              <Link to="/agendar-demo">Agendar Demo</Link>
             </Button>
           </div>
 
@@ -58,7 +61,7 @@ const HeroSection = () => {
           <div className="grid grid-cols-3 gap-8 mt-16 pt-16 border-t border-border animate-fade-up" style={{ animationDelay: "0.4s" }}>
             <div>
               <p className="font-display font-bold text-3xl md:text-4xl text-foreground">150+</p>
-              <p className="text-sm md:text-base text-muted-foreground mt-1">Indústrias Conectadas</p>
+              <p className="text-sm md:text-base text-muted-foreground mt-1">Indústrias e Fazendas Conectadas</p>
             </div>
             <div>
               <p className="font-display font-bold text-3xl md:text-4xl text-foreground">500+</p>

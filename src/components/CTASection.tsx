@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Mail, Phone } from "lucide-react";
 
@@ -24,12 +25,14 @@ const CTASection = () => {
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-                <Button variant="hero" size="xl" className="group w-full sm:w-auto">
-                  Criar Conta Gratuita
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <Button variant="hero" size="xl" className="group w-full sm:w-auto" asChild>
+                  <Link to="/criar-conta">
+                    Criar Conta Gratuita
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </Link>
                 </Button>
-                <Button variant="outline-hero" size="xl" className="w-full sm:w-auto">
-                  Falar com Especialista
+                <Button variant="outline-hero" size="xl" className="w-full sm:w-auto" asChild>
+                  <Link to="/falar-com-especialista">Falar com Especialista</Link>
                 </Button>
               </div>
 
