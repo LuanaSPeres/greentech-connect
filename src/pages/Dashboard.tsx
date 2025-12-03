@@ -12,12 +12,14 @@ import {
   Search,
   Plus,
   ArrowRight,
+  ArrowLeft,
   Zap,
   Droplets,
   Recycle,
   Target,
   Calendar,
-  ChevronRight
+  ChevronRight,
+  Home
 } from "lucide-react";
 
 const metrics = [
@@ -103,6 +105,7 @@ const Dashboard = () => {
 
         <nav className="px-4 space-y-1">
           {[
+            { icon: Home, label: "Página Inicial", href: "/" },
             { icon: BarChart3, label: "Dashboard", href: "/dashboard", active: true },
             { icon: Search, label: "Explorar Soluções", href: "/solucoes" },
             { icon: Users, label: "Conexões", href: "#" },
