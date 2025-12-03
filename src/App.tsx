@@ -17,6 +17,8 @@ import ComoFunciona from "./pages/ComoFunciona";
 import CriarConta from "./pages/CriarConta";
 import FalarComEspecialista from "./pages/FalarComEspecialista";
 import SaibaMais from "./pages/SaibaMais";
+import PraticasAdotadas from "./pages/PraticasAdotadas";
+import VisualizarRelatorio from "./pages/VisualizarRelatorio";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +36,8 @@ const App = () => (
           <Route path="/perfil-empresa" element={<PerfilEmpresa />} />
           <Route path="/registro-impacto" element={<RegistroImpacto />} />
           <Route path="/relatorios" element={<Relatorios />} />
+          <Route path="/visualizar-relatorio" element={<VisualizarRelatorio />} />
+          <Route path="/praticas-adotadas" element={<PraticasAdotadas />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/solucoes" element={<Solucoes />} />
           <Route path="/solucoes/:id" element={<SolucaoDetalhe />} />
