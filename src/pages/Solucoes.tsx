@@ -141,8 +141,9 @@ const Solucoes = () => {
               </span>
             </Link>
             <div className="flex items-center gap-4">
-              <Link to="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
-                Dashboard
+              <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Voltar ao início</span>
               </Link>
               <Button variant="hero" asChild>
                 <Link to="/cadastro">Cadastrar Solução</Link>

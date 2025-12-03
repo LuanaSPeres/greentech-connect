@@ -82,9 +82,12 @@ const SolucaoDetalhe = () => {
               </span>
             </Link>
             <div className="flex items-center gap-4">
-              <Link to="/solucoes" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+              <Link to="/solucoes" className="text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
+                Catálogo
+              </Link>
+              <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
                 <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">Voltar ao catálogo</span>
+                <span className="hidden sm:inline">Voltar ao início</span>
               </Link>
             </div>
           </nav>
