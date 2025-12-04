@@ -20,8 +20,11 @@ import {
   Building2,
   MapPin,
   Award,
-  BarChart3
+  BarChart3,
+  FileDown
 } from "lucide-react";
+import { toast } from "sonner";
+import jsPDF from "jspdf";
 
 // Dados do relatório de sustentabilidade
 const relatorioData = {
@@ -139,6 +142,187 @@ const VisualizarRelatorio = () => {
   const [searchParams] = useSearchParams();
   const empresaId = searchParams.get("empresa") || "1";
 
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Header
+    doc.setFillColor(34, 139, 34);
+    doc.rect(0, 0, pageWidth, 35, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("Relatório de Sustentabilidade ESG", pageWidth / 2, 15, { align: "center" });
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text(relatorioData.empresa.nome, pageWidth / 2, 25, { align: "center" });
+    doc.text(relatorioData.empresa.periodoAnalise, pageWidth / 2, 32, { align: "center" });
+
+    // Reset text color
+    doc.setTextColor(0, 0, 0);
+    
+    // Company Info
+    let yPos = 50;
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Informações da Empresa", 15, yPos);
+    yPos += 10;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`CNPJ: ${relatorioData.empresa.cnpj}`, 15, yPos);
+    yPos += 6;
+    doc.text(`Setor: ${relatorioData.empresa.setor}`, 15, yPos);
+    yPos += 6;
+    doc.text(`Localização: ${relatorioData.empresa.localizacao}`, 15, yPos);
+    
+    // ESG Score
+    yPos += 15;
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Pontuação ESG", 15, yPos);
+    yPos += 10;
+    doc.setFontSize(24);
+    doc.setTextColor(34, 139, 34);
+    doc.text(`${relatorioData.resumoExecutivo.pontuacaoESG}`, 15, yPos);
+    doc.setFontSize(12);
+    doc.text(` / 100  (Classificação: ${relatorioData.resumoExecutivo.classificacao})`, 35, yPos);
+    doc.setTextColor(0, 0, 0);
+    
+    // Metrics
+    yPos += 20;
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Métricas de Impacto Ambiental", 15, yPos);
+    yPos += 10;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    
+    // Emissões
+    doc.text(`Emissões CO₂:`, 15, yPos);
+    doc.text(`Baseline: ${relatorioData.metricas.emissoes.baseline} ${relatorioData.metricas.emissoes.unidade}`, 60, yPos);
+    doc.text(`Atual: ${relatorioData.metricas.emissoes.atual} ${relatorioData.metricas.emissoes.unidade}`, 130, yPos);
+    doc.setTextColor(34, 139, 34);
+    doc.text(`(-${relatorioData.metricas.emissoes.reducao}%)`, 180, yPos);
+    doc.setTextColor(0, 0, 0);
+    yPos += 8;
+    
+    // Água
+    doc.text(`Consumo de Água:`, 15, yPos);
+    doc.text(`Baseline: ${(relatorioData.metricas.agua.baseline / 1000000).toFixed(1)}M L/ano`, 60, yPos);
+    doc.text(`Atual: ${(relatorioData.metricas.agua.atual / 1000000).toFixed(1)}M L/ano`, 130, yPos);
+    doc.setTextColor(34, 139, 34);
+    doc.text(`(-${relatorioData.metricas.agua.reducao}%)`, 180, yPos);
+    doc.setTextColor(0, 0, 0);
+    yPos += 8;
+    
+    // Energia
+    doc.text(`Consumo de Energia:`, 15, yPos);
+    doc.text(`Baseline: ${(relatorioData.metricas.energia.baseline / 1000).toFixed(0)}K kWh/ano`, 60, yPos);
+    doc.text(`Atual: ${(relatorioData.metricas.energia.atual / 1000).toFixed(0)}K kWh/ano`, 130, yPos);
+    doc.setTextColor(34, 139, 34);
+    doc.text(`(-${relatorioData.metricas.energia.reducao}%)`, 180, yPos);
+    doc.setTextColor(0, 0, 0);
+    yPos += 8;
+    
+    // Resíduos
+    doc.text(`Resíduos Gerados:`, 15, yPos);
+    doc.text(`Baseline: ${relatorioData.metricas.residuos.baseline} ton/ano`, 60, yPos);
+    doc.text(`Atual: ${relatorioData.metricas.residuos.atual} ton/ano`, 130, yPos);
+    doc.setTextColor(34, 139, 34);
+    doc.text(`(-${relatorioData.metricas.residuos.reducao}%)`, 180, yPos);
+    doc.setTextColor(0, 0, 0);
+    
+    // ODS
+    yPos += 20;
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Contribuição para ODS", 15, yPos);
+    yPos += 10;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    
+    relatorioData.odsContribuicao.forEach((ods) => {
+      doc.text(`ODS ${ods.ods} - ${ods.nome}: ${ods.contribuicao}%`, 15, yPos);
+      yPos += 6;
+    });
+    
+    // Soluções
+    yPos += 10;
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Soluções Implementadas", 15, yPos);
+    yPos += 10;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    
+    relatorioData.solucoesImplementadas.forEach((sol) => {
+      if (yPos > 270) {
+        doc.addPage();
+        yPos = 20;
+      }
+      doc.text(`• ${sol.nome} (${sol.fornecedor})`, 15, yPos);
+      doc.text(`Impacto: ${sol.impactoMedido}`, 120, yPos);
+      yPos += 6;
+    });
+    
+    // Footer
+    const totalPages = doc.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(128, 128, 128);
+      doc.text(
+        `Gerado pelo GreenLinkHub em ${new Date().toLocaleDateString('pt-BR')} - Página ${i} de ${totalPages}`,
+        pageWidth / 2,
+        290,
+        { align: "center" }
+      );
+    }
+    
+    doc.save(`relatorio-esg-${relatorioData.empresa.nome.toLowerCase().replace(/\s+/g, '-')}.pdf`);
+    toast.success("Relatório PDF exportado com sucesso!");
+  };
+
+  const exportToCSV = () => {
+    const rows = [
+      ["Relatório de Sustentabilidade ESG"],
+      [""],
+      ["Empresa", relatorioData.empresa.nome],
+      ["CNPJ", relatorioData.empresa.cnpj],
+      ["Setor", relatorioData.empresa.setor],
+      ["Localização", relatorioData.empresa.localizacao],
+      ["Período", relatorioData.empresa.periodoAnalise],
+      [""],
+      ["Pontuação ESG", relatorioData.resumoExecutivo.pontuacaoESG.toString()],
+      ["Classificação", relatorioData.resumoExecutivo.classificacao],
+      [""],
+      ["MÉTRICAS DE IMPACTO"],
+      ["Métrica", "Baseline", "Atual", "Meta", "Redução"],
+      ["Emissões CO₂ (ton/ano)", relatorioData.metricas.emissoes.baseline.toString(), relatorioData.metricas.emissoes.atual.toString(), relatorioData.metricas.emissoes.meta.toString(), `-${relatorioData.metricas.emissoes.reducao}%`],
+      ["Água (L/ano)", relatorioData.metricas.agua.baseline.toString(), relatorioData.metricas.agua.atual.toString(), relatorioData.metricas.agua.meta.toString(), `-${relatorioData.metricas.agua.reducao}%`],
+      ["Energia (kWh/ano)", relatorioData.metricas.energia.baseline.toString(), relatorioData.metricas.energia.atual.toString(), relatorioData.metricas.energia.meta.toString(), `-${relatorioData.metricas.energia.reducao}%`],
+      ["Resíduos (ton/ano)", relatorioData.metricas.residuos.baseline.toString(), relatorioData.metricas.residuos.atual.toString(), relatorioData.metricas.residuos.meta.toString(), `-${relatorioData.metricas.residuos.reducao}%`],
+      [""],
+      ["CONTRIBUIÇÃO ODS"],
+      ["ODS", "Nome", "Contribuição"],
+      ...relatorioData.odsContribuicao.map(ods => [ods.ods.toString(), ods.nome, `${ods.contribuicao}%`]),
+      [""],
+      ["SOLUÇÕES IMPLEMENTADAS"],
+      ["Solução", "Fornecedor", "Data", "Impacto", "Status"],
+      ...relatorioData.solucoesImplementadas.map(sol => [sol.nome, sol.fornecedor, sol.dataImplementacao, sol.impactoMedido, sol.status]),
+    ];
+
+    const csvContent = rows.map(row => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `relatorio-esg-${relatorioData.empresa.nome.toLowerCase().replace(/\s+/g, '-')}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success("Relatório CSV exportado com sucesso!");
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -166,9 +350,13 @@ const VisualizarRelatorio = () => {
                 <Printer className="w-4 h-4" />
                 <span className="hidden sm:inline ml-2">Imprimir</span>
               </Button>
-              <Button variant="hero" size="sm">
+              <Button variant="hero" size="sm" onClick={exportToPDF}>
                 <Download className="w-4 h-4" />
                 <span className="hidden sm:inline ml-2">PDF</span>
+              </Button>
+              <Button variant="outline" size="sm" onClick={exportToCSV}>
+                <FileDown className="w-4 h-4" />
+                <span className="hidden sm:inline ml-2">CSV</span>
               </Button>
             </div>
           </nav>
