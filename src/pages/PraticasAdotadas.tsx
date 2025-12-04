@@ -17,11 +17,118 @@ import {
   BarChart3,
   Filter,
   Search,
-  Download
+  Download,
+  X,
+  Info,
+  Droplets,
+  Zap
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useState } from "react";
+
+// Descrições detalhadas das práticas
+const praticasDescricoes: Record<string, { descricao: string; beneficios: string[]; requisitos: string[]; custo: string; roi: string }> = {
+  "Sistema de Irrigação Inteligente": {
+    descricao: "Sistema automatizado que utiliza sensores de umidade do solo, dados meteorológicos e inteligência artificial para otimizar a irrigação agrícola, aplicando água apenas quando e onde necessário.",
+    beneficios: ["Redução de até 45% no consumo de água", "Aumento de 20% na produtividade", "Redução de doenças causadas por excesso de umidade", "Monitoramento em tempo real via aplicativo"],
+    requisitos: ["Infraestrutura básica de irrigação", "Conexão à internet", "Energia elétrica no local"],
+    custo: "R$ 15.000 - R$ 50.000 por hectare",
+    roi: "Retorno em 12-18 meses"
+  },
+  "Biodigestor para Resíduos": {
+    descricao: "Equipamento que realiza a decomposição anaeróbica de resíduos orgânicos (dejetos animais, restos de culturas), produzindo biogás para energia e biofertilizante rico em nutrientes.",
+    beneficios: ["Geração de energia limpa e renovável", "Produção de biofertilizante", "Destinação adequada de resíduos", "Redução de odores e vetores"],
+    requisitos: ["Volume mínimo de resíduos orgânicos", "Área para instalação", "Manutenção periódica"],
+    custo: "R$ 80.000 - R$ 500.000",
+    roi: "Retorno em 24-36 meses"
+  },
+  "Drones para Monitoramento": {
+    descricao: "Utilização de drones equipados com câmeras multiespectrais e sensores para monitoramento de lavouras, identificação precoce de pragas, doenças e deficiências nutricionais.",
+    beneficios: ["Redução de 30% no uso de defensivos", "Detecção precoce de problemas", "Mapeamento preciso da propriedade", "Economia de tempo e mão de obra"],
+    requisitos: ["Licença da ANAC para operação", "Operador treinado", "Software de processamento de imagens"],
+    custo: "R$ 25.000 - R$ 150.000",
+    roi: "Retorno em 8-12 meses"
+  },
+  "Painéis Solares Bifaciais": {
+    descricao: "Painéis fotovoltaicos de alta eficiência que captam energia solar em ambas as faces, aumentando a geração em até 30% comparado aos painéis tradicionais.",
+    beneficios: ["Redução de até 35% na conta de energia", "Maior geração por área instalada", "Vida útil superior a 25 anos", "Manutenção mínima"],
+    requisitos: ["Área disponível para instalação", "Análise de sombreamento", "Conexão à rede elétrica"],
+    custo: "R$ 4.000 - R$ 7.000 por kWp",
+    roi: "Retorno em 4-6 anos"
+  },
+  "Sistema de Reuso de Água": {
+    descricao: "Sistema de tratamento e reaproveitamento de águas residuais para fins não potáveis, como irrigação, limpeza e processos industriais.",
+    beneficios: ["Economia de até 50% no consumo de água", "Redução de efluentes lançados", "Menor dependência de fontes externas", "Conformidade ambiental"],
+    requisitos: ["Estação de tratamento adequada", "Separação de redes hidráulicas", "Monitoramento de qualidade"],
+    custo: "R$ 50.000 - R$ 300.000",
+    roi: "Retorno em 18-30 meses"
+  },
+  "Plantio Direto com Cobertura": {
+    descricao: "Técnica de cultivo que mantém o solo permanentemente coberto com palha ou plantas de cobertura, eliminando o revolvimento e aumentando o sequestro de carbono.",
+    beneficios: ["Aumento de 40% no carbono do solo", "Redução da erosão", "Maior retenção de água", "Economia em preparo do solo"],
+    requisitos: ["Equipamentos específicos (plantadeiras)", "Manejo adequado de palhada", "Rotação de culturas"],
+    custo: "R$ 800 - R$ 1.500 por hectare",
+    roi: "Benefícios a partir do 2º ano"
+  },
+  "Integração Lavoura-Pecuária": {
+    descricao: "Sistema que integra a produção agrícola e pecuária na mesma área, alternando cultivos e pastejo, promovendo a recuperação do solo e diversificação de renda.",
+    beneficios: ["Aumento de 25% na produtividade", "Diversificação de receitas", "Melhoria da fertilidade do solo", "Redução de pragas e doenças"],
+    requisitos: ["Planejamento integrado", "Infraestrutura para ambas atividades", "Conhecimento técnico"],
+    custo: "R$ 2.000 - R$ 5.000 por hectare",
+    roi: "Retorno em 12-24 meses"
+  },
+  "Energia Solar Fotovoltaica": {
+    descricao: "Sistema de geração de energia elétrica a partir da luz solar, convertida por painéis fotovoltaicos, podendo suprir 100% da demanda energética da propriedade.",
+    beneficios: ["100% energia renovável", "Independência energética", "Economia a longo prazo", "Valorização do imóvel"],
+    requisitos: ["Área para instalação dos painéis", "Avaliação da rede elétrica", "Projeto técnico aprovado"],
+    custo: "R$ 5.000 - R$ 8.000 por kWp",
+    roi: "Retorno em 4-7 anos"
+  },
+  "Rastreabilidade Blockchain": {
+    descricao: "Sistema de rastreamento de produtos agrícolas usando tecnologia blockchain, garantindo transparência e imutabilidade dos dados desde a origem até o consumidor final.",
+    beneficios: ["100% rastreabilidade", "Acesso a mercados premium", "Combate a fraudes", "Confiança do consumidor"],
+    requisitos: ["Sistema de identificação dos produtos", "Integração com parceiros da cadeia", "Treinamento de equipe"],
+    custo: "R$ 0,50 - R$ 2,00 por unidade rastreada",
+    roi: "Retorno em 6-12 meses"
+  },
+  "Frota Elétrica": {
+    descricao: "Substituição de veículos movidos a combustíveis fósseis por veículos elétricos, reduzindo emissões e custos operacionais com combustível e manutenção.",
+    beneficios: ["Redução de 60% nas emissões", "Economia em combustível", "Menor custo de manutenção", "Imagem sustentável"],
+    requisitos: ["Infraestrutura de recarga", "Planejamento de autonomia", "Investimento inicial elevado"],
+    custo: "R$ 150.000 - R$ 400.000 por veículo",
+    roi: "Retorno em 5-8 anos"
+  },
+  "Otimização de Rotas com IA": {
+    descricao: "Software de inteligência artificial que analisa múltiplas variáveis para calcular as rotas mais eficientes, reduzindo distâncias percorridas e consumo de combustível.",
+    beneficios: ["Economia de 20% em combustível", "Redução do tempo de entrega", "Menor desgaste dos veículos", "Satisfação do cliente"],
+    requisitos: ["Sistema de gestão de frotas", "GPS nos veículos", "Integração com sistemas existentes"],
+    custo: "R$ 200 - R$ 500 por veículo/mês",
+    roi: "Retorno imediato"
+  },
+  "Agricultura de Precisão": {
+    descricao: "Conjunto de tecnologias que permitem o manejo localizado das lavouras, aplicando insumos de forma variável conforme as necessidades específicas de cada área.",
+    beneficios: ["Redução de 35% em insumos", "Aumento da produtividade", "Menor impacto ambiental", "Dados para tomada de decisão"],
+    requisitos: ["Equipamentos com GPS e taxa variável", "Mapeamento da propriedade", "Software de gestão"],
+    custo: "R$ 500 - R$ 2.000 por hectare",
+    roi: "Retorno em 1-2 safras"
+  },
+  "Recuperação de Áreas Degradadas": {
+    descricao: "Processo de restauração ecológica de áreas impactadas, utilizando espécies nativas e técnicas de manejo para recuperar a biodiversidade e serviços ecossistêmicos.",
+    beneficios: ["Restauração da biodiversidade", "Créditos de carbono", "Regularização ambiental", "Valorização da propriedade"],
+    requisitos: ["Diagnóstico da área", "Mudas de espécies nativas", "Acompanhamento técnico"],
+    custo: "R$ 8.000 - R$ 25.000 por hectare",
+    roi: "Benefícios a médio/longo prazo"
+  },
+  "Monitoramento via Satélite": {
+    descricao: "Utilização de imagens de satélite para monitoramento contínuo das áreas de cultivo, permitindo análise de vegetação, detecção de anomalias e planejamento agrícola.",
+    beneficios: ["Cobertura 100% da área", "Monitoramento contínuo", "Histórico de imagens", "Alertas automáticos"],
+    requisitos: ["Assinatura de serviço", "Internet para acesso", "Treinamento para interpretação"],
+    custo: "R$ 5 - R$ 20 por hectare/ano",
+    roi: "Retorno imediato"
+  },
+};
 
 // Dados de práticas adotadas por empresas
 const empresasPraticas = [
@@ -102,6 +209,7 @@ const estatisticasGerais = {
 const PraticasAdotadas = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [setorFiltro, setSetorFiltro] = useState("all");
+  const [selectedPratica, setSelectedPratica] = useState<string | null>(null);
 
   const empresasFiltradas = empresasPraticas.filter((empresa) => {
     const matchesSearch = empresa.empresa.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -109,6 +217,8 @@ const PraticasAdotadas = () => {
     const matchesSetor = setorFiltro === "all" || empresa.setor.toLowerCase() === setorFiltro.toLowerCase();
     return matchesSearch && matchesSetor;
   });
+
+  const praticaInfo = selectedPratica ? praticasDescricoes[selectedPratica] : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -275,14 +385,21 @@ const PraticasAdotadas = () => {
                   <h4 className="font-semibold text-foreground mb-4">Práticas Implementadas</h4>
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {empresa.praticas.map((pratica, index) => (
-                      <div key={index} className="bg-muted/50 rounded-xl p-4">
+                      <div 
+                        key={index} 
+                        className="bg-muted/50 rounded-xl p-4 cursor-pointer hover:bg-muted transition-colors"
+                        onClick={() => setSelectedPratica(pratica.nome)}
+                      >
                         <div className="flex items-start justify-between mb-2">
                           <h5 className="font-medium text-foreground text-sm">{pratica.nome}</h5>
-                          {pratica.status === "Ativo" ? (
-                            <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                          ) : (
-                            <Clock className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                          )}
+                          <div className="flex items-center gap-1">
+                            <Info className="w-4 h-4 text-muted-foreground" />
+                            {pratica.status === "Ativo" ? (
+                              <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                            ) : (
+                              <Clock className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                            )}
+                          </div>
                         </div>
                         <p className="text-sm text-primary font-medium mb-2">{pratica.impacto}</p>
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -313,6 +430,81 @@ const PraticasAdotadas = () => {
           )}
         </div>
       </main>
+
+      {/* Dialog para detalhes da prática */}
+      <Dialog open={!!selectedPratica} onOpenChange={() => setSelectedPratica(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl flex items-center gap-2">
+              <Leaf className="w-5 h-5 text-primary" />
+              {selectedPratica}
+            </DialogTitle>
+            <DialogDescription>
+              Informações detalhadas sobre esta prática sustentável
+            </DialogDescription>
+          </DialogHeader>
+          
+          {praticaInfo && (
+            <div className="space-y-6 mt-4">
+              <div>
+                <h4 className="font-semibold text-foreground mb-2">Descrição</h4>
+                <p className="text-muted-foreground">{praticaInfo.descricao}</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-foreground mb-3">Principais Benefícios</h4>
+                <ul className="space-y-2">
+                  {praticaInfo.beneficios.map((beneficio, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                      <span className="text-muted-foreground">{beneficio}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-foreground mb-3">Requisitos</h4>
+                <ul className="space-y-2">
+                  {praticaInfo.requisitos.map((requisito, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-muted-foreground">{requisito}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="bg-muted/50 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Target className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium text-foreground">Investimento Estimado</span>
+                  </div>
+                  <p className="text-muted-foreground">{praticaInfo.custo}</p>
+                </div>
+                <div className="bg-muted/50 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <TrendingUp className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium text-foreground">Retorno do Investimento</span>
+                  </div>
+                  <p className="text-muted-foreground">{praticaInfo.roi}</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <Button variant="hero" className="flex-1">
+                  <Search className="w-4 h-4 mr-2" />
+                  Ver Soluções Relacionadas
+                </Button>
+                <Button variant="outline" onClick={() => setSelectedPratica(null)}>
+                  Fechar
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
