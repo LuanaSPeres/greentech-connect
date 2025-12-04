@@ -21,7 +21,7 @@ const VideoSection = () => {
         "Defina o público-alvo",
         "Acompanhe empresas interessadas"
       ],
-      videoId: "dQw4w9WgXcQ", // Placeholder - substituir pelo vídeo real
+      videoId: "", // Placeholder - substituir pelo vídeo real
       icon: FlaskConical,
       color: "primary"
     },
@@ -34,7 +34,7 @@ const VideoSection = () => {
         "Busque soluções compatíveis",
         "Registre e exporte seu impacto"
       ],
-      videoId: "dQw4w9WgXcQ", // Placeholder - substituir pelo vídeo real
+      videoId: "", // Placeholder - substituir pelo vídeo real
       icon: Building2,
       color: "blue-500"
     }
