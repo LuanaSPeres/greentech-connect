@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Leaf } from "lucide-react";
+import { Menu, X, Leaf, FlaskConical, Building2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,14 +24,14 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <nav className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center gap-2 group">
             <div className="w-10 h-10 rounded-xl bg-hero-gradient flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform duration-300">
               <Leaf className="w-5 h-5 text-primary-foreground" />
             </div>
             <span className="font-display font-bold text-xl text-foreground">
               GreenLink<span className="text-primary">Hub</span>
             </span>
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-8">
@@ -41,11 +48,27 @@ const Header = () => {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-4">
-            <Button variant="ghost" asChild>
-              <a href="/dashboard">Entrar</a>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost">Entrar</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem asChild>
+                  <Link to="/portal-pesquisador" className="flex items-center gap-2 cursor-pointer">
+                    <FlaskConical className="w-4 h-4" />
+                    <span>Portal do Pesquisador</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/portal-empresa" className="flex items-center gap-2 cursor-pointer">
+                    <Building2 className="w-4 h-4" />
+                    <span>Portal da Empresa</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button variant="hero" asChild>
-              <a href="/cadastro">Começar Agora</a>
+              <Link to="/cadastro">Começar Agora</Link>
             </Button>
           </div>
 
@@ -74,11 +97,21 @@ const Header = () => {
                 </a>
               ))}
               <div className="flex flex-col gap-3 pt-4 border-t border-border">
-                <Button variant="ghost" className="w-full" asChild>
-                  <a href="/dashboard">Entrar</a>
+                <p className="text-sm font-medium text-muted-foreground px-2">Entrar como:</p>
+                <Button variant="outline" className="w-full justify-start" asChild>
+                  <Link to="/portal-pesquisador" onClick={() => setIsMenuOpen(false)}>
+                    <FlaskConical className="w-4 h-4 mr-2" />
+                    Pesquisador
+                  </Link>
+                </Button>
+                <Button variant="outline" className="w-full justify-start" asChild>
+                  <Link to="/portal-empresa" onClick={() => setIsMenuOpen(false)}>
+                    <Building2 className="w-4 h-4 mr-2" />
+                    Empresa
+                  </Link>
                 </Button>
                 <Button variant="hero" className="w-full" asChild>
-                  <a href="/cadastro">Começar Agora</a>
+                  <Link to="/cadastro" onClick={() => setIsMenuOpen(false)}>Começar Agora</Link>
                 </Button>
               </div>
             </div>
