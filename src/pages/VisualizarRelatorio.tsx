@@ -145,136 +145,236 @@ const VisualizarRelatorio = () => {
   const exportToPDF = () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 15;
+    const contentWidth = pageWidth - margin * 2;
     
+    // Helper function to check and add new page
+    const checkPageBreak = (currentY: number, neededSpace: number = 20) => {
+      if (currentY + neededSpace > pageHeight - 20) {
+        doc.addPage();
+        return 20;
+      }
+      return currentY;
+    };
+
     // Header
     doc.setFillColor(34, 139, 34);
-    doc.rect(0, 0, pageWidth, 35, 'F');
+    doc.rect(0, 0, pageWidth, 40, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(20);
+    doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
-    doc.text("Relatório de Sustentabilidade ESG", pageWidth / 2, 15, { align: "center" });
-    doc.setFontSize(12);
+    doc.text("Relatorio de Sustentabilidade ESG", pageWidth / 2, 15, { align: "center" });
+    doc.setFontSize(14);
     doc.setFont("helvetica", "normal");
     doc.text(relatorioData.empresa.nome, pageWidth / 2, 25, { align: "center" });
-    doc.text(relatorioData.empresa.periodoAnalise, pageWidth / 2, 32, { align: "center" });
+    doc.setFontSize(10);
+    doc.text(relatorioData.empresa.periodoAnalise, pageWidth / 2, 35, { align: "center" });
 
     // Reset text color
     doc.setTextColor(0, 0, 0);
     
-    // Company Info
-    let yPos = 50;
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "bold");
-    doc.text("Informações da Empresa", 15, yPos);
-    yPos += 10;
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text(`CNPJ: ${relatorioData.empresa.cnpj}`, 15, yPos);
-    yPos += 6;
-    doc.text(`Setor: ${relatorioData.empresa.setor}`, 15, yPos);
-    yPos += 6;
-    doc.text(`Localização: ${relatorioData.empresa.localizacao}`, 15, yPos);
+    // Company Info Section
+    let yPos = 55;
+    doc.setFillColor(245, 245, 245);
+    doc.rect(margin, yPos - 5, contentWidth, 35, 'F');
     
-    // ESG Score
-    yPos += 15;
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "bold");
-    doc.text("Pontuação ESG", 15, yPos);
-    yPos += 10;
-    doc.setFontSize(24);
-    doc.setTextColor(34, 139, 34);
-    doc.text(`${relatorioData.resumoExecutivo.pontuacaoESG}`, 15, yPos);
     doc.setFontSize(12);
-    doc.text(` / 100  (Classificação: ${relatorioData.resumoExecutivo.classificacao})`, 35, yPos);
-    doc.setTextColor(0, 0, 0);
-    
-    // Metrics
-    yPos += 20;
-    doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
-    doc.text("Métricas de Impacto Ambiental", 15, yPos);
-    yPos += 10;
+    doc.text("Informacoes da Empresa", margin + 5, yPos + 3);
+    yPos += 12;
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
+    doc.text(`CNPJ: ${relatorioData.empresa.cnpj}`, margin + 5, yPos);
+    doc.text(`Setor: ${relatorioData.empresa.setor}`, margin + 80, yPos);
+    yPos += 7;
+    doc.text(`Localizacao: ${relatorioData.empresa.localizacao}`, margin + 5, yPos);
     
-    // Emissões
-    doc.text(`Emissões CO₂:`, 15, yPos);
-    doc.text(`Baseline: ${relatorioData.metricas.emissoes.baseline} ${relatorioData.metricas.emissoes.unidade}`, 60, yPos);
-    doc.text(`Atual: ${relatorioData.metricas.emissoes.atual} ${relatorioData.metricas.emissoes.unidade}`, 130, yPos);
-    doc.setTextColor(34, 139, 34);
-    doc.text(`(-${relatorioData.metricas.emissoes.reducao}%)`, 180, yPos);
-    doc.setTextColor(0, 0, 0);
-    yPos += 8;
-    
-    // Água
-    doc.text(`Consumo de Água:`, 15, yPos);
-    doc.text(`Baseline: ${(relatorioData.metricas.agua.baseline / 1000000).toFixed(1)}M L/ano`, 60, yPos);
-    doc.text(`Atual: ${(relatorioData.metricas.agua.atual / 1000000).toFixed(1)}M L/ano`, 130, yPos);
-    doc.setTextColor(34, 139, 34);
-    doc.text(`(-${relatorioData.metricas.agua.reducao}%)`, 180, yPos);
-    doc.setTextColor(0, 0, 0);
-    yPos += 8;
-    
-    // Energia
-    doc.text(`Consumo de Energia:`, 15, yPos);
-    doc.text(`Baseline: ${(relatorioData.metricas.energia.baseline / 1000).toFixed(0)}K kWh/ano`, 60, yPos);
-    doc.text(`Atual: ${(relatorioData.metricas.energia.atual / 1000).toFixed(0)}K kWh/ano`, 130, yPos);
-    doc.setTextColor(34, 139, 34);
-    doc.text(`(-${relatorioData.metricas.energia.reducao}%)`, 180, yPos);
-    doc.setTextColor(0, 0, 0);
-    yPos += 8;
-    
-    // Resíduos
-    doc.text(`Resíduos Gerados:`, 15, yPos);
-    doc.text(`Baseline: ${relatorioData.metricas.residuos.baseline} ton/ano`, 60, yPos);
-    doc.text(`Atual: ${relatorioData.metricas.residuos.atual} ton/ano`, 130, yPos);
-    doc.setTextColor(34, 139, 34);
-    doc.text(`(-${relatorioData.metricas.residuos.reducao}%)`, 180, yPos);
-    doc.setTextColor(0, 0, 0);
-    
-    // ODS
-    yPos += 20;
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "bold");
-    doc.text("Contribuição para ODS", 15, yPos);
-    yPos += 10;
+    // ESG Score Box
+    yPos += 25;
+    doc.setFillColor(34, 139, 34);
+    doc.rect(margin, yPos - 5, 60, 30, 'F');
+    doc.setTextColor(255, 255, 255);
     doc.setFontSize(10);
+    doc.text("Pontuacao ESG", margin + 5, yPos + 3);
+    doc.setFontSize(28);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${relatorioData.resumoExecutivo.pontuacaoESG}`, margin + 5, yPos + 20);
+    doc.setFontSize(12);
+    doc.text(`/ 100`, margin + 35, yPos + 20);
+    
+    // Classification Badge
+    doc.setFillColor(255, 215, 0);
+    doc.rect(margin + 65, yPos - 5, 35, 30, 'F');
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.text("Classificacao", margin + 70, yPos + 3);
+    doc.setFontSize(24);
+    doc.setFont("helvetica", "bold");
+    doc.text(relatorioData.resumoExecutivo.classificacao, margin + 75, yPos + 20);
+    
+    doc.setTextColor(0, 0, 0);
+    
+    // Environmental Metrics Section
+    yPos += 45;
+    yPos = checkPageBreak(yPos, 60);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Metricas de Impacto Ambiental", margin, yPos);
+    yPos += 10;
+    
+    // Table Header
+    doc.setFillColor(240, 240, 240);
+    doc.rect(margin, yPos - 4, contentWidth, 8, 'F');
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "bold");
+    doc.text("Metrica", margin + 2, yPos);
+    doc.text("Baseline", margin + 55, yPos);
+    doc.text("Atual", margin + 95, yPos);
+    doc.text("Meta", margin + 130, yPos);
+    doc.text("Reducao", margin + 160, yPos);
+    yPos += 10;
+    
+    doc.setFont("helvetica", "normal");
+    const metricsData = [
+      { 
+        nome: "Emissoes CO2", 
+        baseline: `${relatorioData.metricas.emissoes.baseline} ton`, 
+        atual: `${relatorioData.metricas.emissoes.atual} ton`, 
+        meta: `${relatorioData.metricas.emissoes.meta} ton`,
+        reducao: relatorioData.metricas.emissoes.reducao 
+      },
+      { 
+        nome: "Consumo de Agua", 
+        baseline: `${(relatorioData.metricas.agua.baseline / 1000000).toFixed(1)}M L`, 
+        atual: `${(relatorioData.metricas.agua.atual / 1000000).toFixed(1)}M L`, 
+        meta: `${(relatorioData.metricas.agua.meta / 1000000).toFixed(1)}M L`,
+        reducao: relatorioData.metricas.agua.reducao 
+      },
+      { 
+        nome: "Consumo de Energia", 
+        baseline: `${(relatorioData.metricas.energia.baseline / 1000).toFixed(0)}K kWh`, 
+        atual: `${(relatorioData.metricas.energia.atual / 1000).toFixed(0)}K kWh`, 
+        meta: `${(relatorioData.metricas.energia.meta / 1000).toFixed(0)}K kWh`,
+        reducao: relatorioData.metricas.energia.reducao 
+      },
+      { 
+        nome: "Residuos Gerados", 
+        baseline: `${relatorioData.metricas.residuos.baseline} ton`, 
+        atual: `${relatorioData.metricas.residuos.atual} ton`, 
+        meta: `${relatorioData.metricas.residuos.meta} ton`,
+        reducao: relatorioData.metricas.residuos.reducao 
+      },
+    ];
+    
+    metricsData.forEach((metric, index) => {
+      if (index % 2 === 0) {
+        doc.setFillColor(250, 250, 250);
+        doc.rect(margin, yPos - 4, contentWidth, 8, 'F');
+      }
+      doc.setTextColor(0, 0, 0);
+      doc.text(metric.nome, margin + 2, yPos);
+      doc.text(metric.baseline, margin + 55, yPos);
+      doc.text(metric.atual, margin + 95, yPos);
+      doc.text(metric.meta, margin + 130, yPos);
+      doc.setTextColor(34, 139, 34);
+      doc.text(`-${metric.reducao}%`, margin + 160, yPos);
+      yPos += 8;
+    });
+    
+    // ODS Contribution
+    yPos += 15;
+    yPos = checkPageBreak(yPos, 50);
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Contribuicao para os ODS", margin, yPos);
+    yPos += 10;
+    doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
     
     relatorioData.odsContribuicao.forEach((ods) => {
-      doc.text(`ODS ${ods.ods} - ${ods.nome}: ${ods.contribuicao}%`, 15, yPos);
-      yPos += 6;
+      yPos = checkPageBreak(yPos, 10);
+      doc.setFillColor(240, 240, 240);
+      doc.rect(margin, yPos - 3, contentWidth * (ods.contribuicao / 100), 6, 'F');
+      doc.setFillColor(34, 139, 34);
+      doc.rect(margin, yPos - 3, contentWidth * (ods.contribuicao / 100) * 0.9, 6, 'F');
+      doc.setTextColor(0, 0, 0);
+      doc.text(`ODS ${ods.ods} - ${ods.nome}`, margin + 2, yPos + 1);
+      doc.text(`${ods.contribuicao}%`, margin + contentWidth - 15, yPos + 1);
+      yPos += 10;
     });
     
-    // Soluções
+    // Implemented Solutions
     yPos += 10;
-    doc.setFontSize(14);
+    yPos = checkPageBreak(yPos, 40);
+    doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text("Soluções Implementadas", 15, yPos);
+    doc.text("Solucoes Implementadas", margin, yPos);
     yPos += 10;
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
     
     relatorioData.solucoesImplementadas.forEach((sol) => {
-      if (yPos > 270) {
-        doc.addPage();
-        yPos = 20;
-      }
-      doc.text(`• ${sol.nome} (${sol.fornecedor})`, 15, yPos);
-      doc.text(`Impacto: ${sol.impactoMedido}`, 120, yPos);
-      yPos += 6;
+      yPos = checkPageBreak(yPos, 25);
+      
+      doc.setFillColor(248, 248, 248);
+      doc.rect(margin, yPos - 4, contentWidth, 20, 'F');
+      
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(0, 0, 0);
+      doc.text(sol.nome, margin + 3, yPos);
+      
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Fornecedor: ${sol.fornecedor}`, margin + 3, yPos + 6);
+      doc.text(`Data: ${sol.dataImplementacao}`, margin + 70, yPos + 6);
+      
+      doc.setTextColor(34, 139, 34);
+      doc.setFont("helvetica", "bold");
+      doc.text(`Impacto: ${sol.impactoMedido}`, margin + 3, yPos + 12);
+      
+      doc.setTextColor(0, 0, 0);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Investimento: ${sol.investimento}`, margin + 100, yPos + 12);
+      
+      yPos += 24;
     });
     
-    // Footer
+    // Certifications
+    yPos += 10;
+    yPos = checkPageBreak(yPos, 30);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0);
+    doc.text("Certificacoes", margin, yPos);
+    yPos += 10;
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    
+    relatorioData.certificacoes.forEach((cert) => {
+      yPos = checkPageBreak(yPos, 8);
+      const statusColor = cert.status === "Valida" ? [34, 139, 34] : [255, 165, 0];
+      doc.setFillColor(statusColor[0], statusColor[1], statusColor[2]);
+      doc.circle(margin + 3, yPos - 1, 2, 'F');
+      doc.setTextColor(0, 0, 0);
+      doc.text(`${cert.nome} - ${cert.status}`, margin + 8, yPos);
+      if (cert.validade !== "-") {
+        doc.text(`(Validade: ${cert.validade})`, margin + 80, yPos);
+      }
+      yPos += 8;
+    });
+    
+    // Footer on all pages
     const totalPages = doc.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
       doc.setFontSize(8);
       doc.setTextColor(128, 128, 128);
       doc.text(
-        `Gerado pelo GreenLinkHub em ${new Date().toLocaleDateString('pt-BR')} - Página ${i} de ${totalPages}`,
+        `Gerado pelo GreenLinkHub em ${new Date().toLocaleDateString('pt-BR')} - Pagina ${i} de ${totalPages}`,
         pageWidth / 2,
-        290,
+        pageHeight - 10,
         { align: "center" }
       );
     }
