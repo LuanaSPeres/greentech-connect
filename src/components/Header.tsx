@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Leaf, FlaskConical, Building2 } from "lucide-react";
+import { Menu, X, Leaf, FlaskConical, Building2, Landmark } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,6 +65,12 @@ const Header = () => {
                     <span>Portal da Empresa</span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/portal-governo" className="flex items-center gap-2 cursor-pointer">
+                    <Landmark className="w-4 h-4" />
+                    <span>Portal do Governo</span>
+                  </Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <Button variant="hero" asChild>
@@ -108,6 +114,12 @@ const Header = () => {
                   <Link to="/portal-empresa" onClick={() => setIsMenuOpen(false)}>
                     <Building2 className="w-4 h-4 mr-2" />
                     Empresa
+                  </Link>
+                </Button>
+                <Button variant="outline" className="w-full justify-start" asChild>
+                  <Link to="/portal-governo" onClick={() => setIsMenuOpen(false)}>
+                    <Landmark className="w-4 h-4 mr-2" />
+                    Governo
                   </Link>
                 </Button>
                 <Button variant="hero" className="w-full" asChild>

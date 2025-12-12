@@ -21,6 +21,7 @@ import PraticasAdotadas from "./pages/PraticasAdotadas";
 import VisualizarRelatorio from "./pages/VisualizarRelatorio";
 import PortalPesquisador from "./pages/PortalPesquisador";
 import PortalEmpresa from "./pages/PortalEmpresa";
+import PortalGoverno from "./pages/PortalGoverno";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/praticas-adotadas" element={<PraticasAdotadas />} />
           <Route path="/portal-pesquisador" element={<PortalPesquisador />} />
           <Route path="/portal-empresa" element={<PortalEmpresa />} />
+          <Route path="/portal-governo" element={<PortalGoverno />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/solucoes" element={<Solucoes />} />
           <Route path="/solucoes/:id" element={<SolucaoDetalhe />} />
